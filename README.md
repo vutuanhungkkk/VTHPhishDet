@@ -379,8 +379,8 @@ Due to GitHub file size limitations, large trained model files are hosted extern
 
 ## Download Links
 
-* RoBERTa Model Weights: ADD_GOOGLE_DRIVE_LINK_HERE
-* RoBERTa Backup Checkpoint: ADD_GOOGLE_DRIVE_LINK_HERE
+* RoBERTa Model Weights: https://drive.google.com/drive/folders/14FlBVscJicX-30Y0Zu2txXqJ-pXwusWY?usp=drive_link
+* RoBERTa Backup Checkpoint: https://drive.google.com/drive/folders/14FlBVscJicX-30Y0Zu2txXqJ-pXwusWY?usp=drive_link
 
 After downloading:
 
