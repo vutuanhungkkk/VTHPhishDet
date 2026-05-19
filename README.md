@@ -1,7 +1,7 @@
 # PhishGuard: AI-Powered Multimodal Phishing Detection Framework
 
 <p align="center">
-  <img src="screenshots/frontend_ui.jpeg" alt="PhishGuard Interface" width="900">
+  <img src="screenshots/framework_interface.png" alt="PhishGuard Interface" width="900">
 </p>
 
 <p align="center">
@@ -403,8 +403,6 @@ Demo video covering:
 * Screenshot phishing detection
 * WHOIS intelligence
 * LLaVA explanation system
-
-will be added soon.
 
 ---
 
