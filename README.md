@@ -417,16 +417,21 @@ Demo video covering:
 
 ---
 
-# Contributors
+# Authors
 
-* S Nandan
-* P Ansika
+**Nandan Sunkara**  
+B.Tech Student  
+Indian Institute of Information Technology Design and Manufacturing Jabalpur (IIITDMJ)
+
+**Ansika Patti**  
+B.Tech Student  
+Indian Institute of Information Technology Design and Manufacturing Jabalpur (IIITDMJ)
 
 ---
 
-# Acknowledgment
+# Project Note
 
-Developed as an academic project exploring multimodal phishing detection using machine learning, NLP, computer vision, and cybersecurity techniques.
+Developed as part of an academic project exploring the use of artificial intelligence, machine learning, computer vision, and natural language processing for multimodal phishing detection and cybersecurity analysis.
 
 ---
 
