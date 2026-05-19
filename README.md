@@ -1,7 +1,7 @@
 # PhishGuard: AI-Powered Multimodal Phishing Detection Framework
 
 <p align="center">
-  <img src="screenshots/system_architecture.png" alt="PhishGuard Architecture" width="900">
+  <img src="screenshots/frontend_ui.jpeg" alt="PhishGuard Interface" width="900">
 </p>
 
 <p align="center">
