@@ -1,5 +1,4 @@
 <div align="center">
-  <h1>🛡️ PhishGuard</h1>
   <h3>AI-Powered Multimodal Phishing Detection Framework</h3>
 </div>
 
@@ -11,8 +10,7 @@
   <img src="https://img.shields.io/badge/Flask-Frontend-000000?style=flat-square&logo=flask">
 </div>
 
-## 📖 What is PhishGuard?
-Traditional phishing detection mechanisms rely on a single vector (like checking a URL against a blacklist). **PhishGuard** takes a multimodal approach, employing Artificial Intelligence to analyze phishing threats across multiple dimensions simultaneously: URL characteristics, email text semantics, website visual structures, and embedded QR codes.
+Traditional phishing detection mechanisms rely on a single vector (like checking a URL against a blacklist). **VTHPhishDet** takes a multimodal approach, employing Artificial Intelligence to analyze phishing threats across multiple dimensions simultaneously: URL characteristics, email text semantics, website visual structures, and embedded QR codes.
 
 By aggregating intelligence from multiple domains, PhishGuard significantly reduces false positives and provides a robust defense against modern, sophisticated phishing attacks.
 
