@@ -4,17 +4,16 @@ from pydantic import BaseModel
 from typing import Optional
 import base64
 
-from backend.services.url_scorer import score_url
-from backend.services.email_scorer import score_email
-from backend.services.screenshot_scorer import score_screenshot
-from backend.services.screenshot_capture import capture_screenshot_sync
-from backend.services.whois_service import get_domain_info
-from backend.utils.score_aggregator import aggregate_scores
-from backend.utils.qr_extractor import extract_url_from_qr
-
+from services.url_scorer import score_url
+from services.email_scorer import score_email
+from services.whois_service import get_domain_info
+from services.vision_scorer import score_image
+from services.ocr_service import extract_text_from_image
+from utils.score_aggregator import aggregate_scores
+from utils.qr_extractor import extract_url_from_qr
 app = FastAPI(
     title="Multimodal Phishing Detector",
-    description="Detects phishing using XGBoost (URL), RoBERTa (Email), LLaVA (Screenshot)",
+    description="Detects phishing using XGBoost (URL), RoBERTa (Email)",
     version="1.1.0"
 )
 
@@ -35,7 +34,6 @@ class EmailRequest(BaseModel):
 class FullScanRequest(BaseModel):
     url: Optional[str] = None
     email_text: Optional[str] = None
-    capture_screenshot: Optional[bool] = False
 
 
 @app.get("/")
@@ -84,42 +82,45 @@ def scan_email(request: EmailRequest):
     }
 
 
-@app.post("/scan/screenshot")
-def scan_screenshot_url(request: URLRequest):
-    """
-    Capture screenshot + analyze with LLaVA.
-    Returns main screenshot + redirect chain screenshots.
-    """
-    capture = capture_screenshot_sync(request.url)
-    image_result = {"image_score": None, "llava_response": None, "error": "LLaVA not configured"}
-
-    if capture.get("screenshot_base64"):
-        image_result = score_screenshot(
-            capture["screenshot_base64"],
-            url=request.url
-        )
-
+@app.post("/scan/email_image")
+async def scan_email_image(file: UploadFile = File(...)):
+    """Extract text from email image using PaddleOCR and score using RoBERTa."""
+    contents = await file.read()
+    image_b64 = base64.b64encode(contents).decode("utf-8")
+    
+    # 1. Extract text via PaddleOCR
+    ocr_result = extract_text_from_image(image_b64)
+    if ocr_result.get("error") or not ocr_result.get("text"):
+        return {"error": ocr_result.get("error", "No text found in image")}
+    
+    extracted_text = ocr_result["text"]
+    
+    # 2. Score extracted text via RoBERTa
+    result = score_email(extracted_text)
+    
     return {
-        "url": request.url,
-        "final_url": capture.get("final_url"),
-        "has_redirect": capture.get("has_redirect"),
-        "redirect_chain": capture.get("redirect_chain", []),
-        "redirect_chain_detail": capture.get("redirect_chain_detail", []),
-        "redirect_screenshots": capture.get("redirect_screenshots", []),
-        "screenshot_base64": capture.get("screenshot_base64"),
-        "image_score": image_result.get("image_score"),
-        "llava_response": image_result.get("llava_response"),
-        "capture_error": capture.get("error")
+        "email_score": result.get("email_score"),
+        "safe_score": result.get("safe_score"),
+        "label": result.get("label"),
+        "confidence": result.get("confidence"),
+        "extracted_text": extracted_text
     }
+
+
+@app.post("/scan/image")
+async def scan_image(file: UploadFile = File(...)):
+    contents = await file.read()
+    image_b64 = base64.b64encode(contents).decode("utf-8")
+    result = score_image(image_b64)
+    result["screenshot_base64"] = image_b64
+    return result
 
 
 @app.post("/scan/full")
 def full_scan(request: FullScanRequest):
     url_score = None
     email_score = None
-    image_score = None
     whois_result = None
-    screenshot_data = None
 
     if request.url:
         url_result = score_url(request.url)
@@ -134,25 +135,11 @@ def full_scan(request: FullScanRequest):
         email_result = score_email(request.email_text)
         email_score = email_result.get("email_score")
 
-    if request.url and request.capture_screenshot:
-        capture = capture_screenshot_sync(request.url)
-        screenshot_data = {
-            "final_url": capture.get("final_url"),
-            "has_redirect": capture.get("has_redirect"),
-            "redirect_chain": capture.get("redirect_chain", []),
-            "redirect_screenshots": capture.get("redirect_screenshots", []),
-            "screenshot_base64": capture.get("screenshot_base64"),
-        }
-        if capture.get("screenshot_base64"):
-            image_result = score_screenshot(capture["screenshot_base64"], url=request.url)
-            image_score = image_result.get("image_score")
-
-    verdict = aggregate_scores(url_score=url_score, email_score=email_score, image_score=image_score)
+    verdict = aggregate_scores(url_score=url_score, email_score=email_score)
 
     return {
         "verdict": verdict,
         "whois": whois_result,
-        "screenshot": screenshot_data
     }
 
 

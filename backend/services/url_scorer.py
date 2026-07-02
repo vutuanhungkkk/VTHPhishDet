@@ -4,19 +4,20 @@ import math
 import numpy as np
 import tldextract
 from urllib.parse import urlparse
-from backend.config import XGBOOST_MODEL_PATH
+from config import XGBOOST_MODEL_PATH
 
 
 print("Loading XGBoost model...")
 with open(XGBOOST_MODEL_PATH, "rb") as f:
     _model = pickle.load(f)
-print("XGBoost loaded ✅")
-
+print("XGBoost loaded [OK]")
+print(_model.get_booster().feature_names)
+print(_model.n_features_in_)
 
 FEATURE_COLUMNS = [
     'url_length', 'hostname_length', 'path_length',
-    'num_digits', 'num_special_chars', 'num_dots', 'num_hyphens',
-    'num_subdomains', 'has_https', 'has_ip', 'has_at',
+    'num_digits', 'ratio_digits', 'num_special_chars', 'num_dots', 'num_hyphens',
+    'num_subdomains', 'has_ip', 'has_at', 'is_shortened',
     'has_suspicious_words', 'url_entropy', 'domain_length', 'tld_length'
 ]
 
@@ -28,17 +29,22 @@ def _entropy(s: str) -> float:
     return -sum(p * math.log2(p) for p in prob)
 
 
+FEATURE_COLUMNS = [
+    'url_length', 'hostname_length', 'path_length',
+    'num_digits', 'num_special_chars', 'num_dots', 'num_hyphens',
+    'num_subdomains', 'has_https', 'has_ip', 'has_at',
+    'has_suspicious_words', 'url_entropy', 'domain_length', 'tld_length'
+]
 def _extract_features(url: str) -> dict:
     try:
         url = str(url)
         if not url.startswith("http"):
             url = "http://" + url
-
         parsed = urlparse(url)
         ext = tldextract.extract(url)
-
+        url_len = len(url)
         return {
-            'url_length': len(url),
+            'url_length': url_len,
             'hostname_length': len(parsed.netloc),
             'path_length': len(parsed.path),
             'num_digits': sum(c.isdigit() for c in url),
@@ -50,7 +56,7 @@ def _extract_features(url: str) -> dict:
             'has_ip': int(bool(re.search(r'\d+\.\d+\.\d+\.\d+', url))),
             'has_at': int('@' in url),
             'has_suspicious_words': int(any(
-                w in url.lower() for w in ['login', 'verify', 'bank', 'secure']
+                w in url.lower() for w in ['login', 'verify', 'bank', 'secure', 'paypal', 'amazon', 'admin', 'update', 'free', 'bonus', 'account', 'webscr', 'ebank', 'service']
             )),
             'url_entropy': _entropy(url),
             'domain_length': len(ext.domain),

@@ -1,6 +1,6 @@
 import whois
 from datetime import datetime, timezone
-from backend.config import WHOIS_YOUNG_DOMAIN_DAYS
+from config import WHOIS_YOUNG_DOMAIN_DAYS
 import tldextract
 
 

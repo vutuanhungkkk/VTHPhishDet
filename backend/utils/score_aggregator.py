@@ -1,4 +1,4 @@
-from backend.config import PHISHING_THRESHOLD, WEIGHT_URL, WEIGHT_EMAIL, WEIGHT_IMAGE
+from config import PHISHING_THRESHOLD, WEIGHT_URL, WEIGHT_EMAIL, WEIGHT_IMAGE
 
 
 def aggregate_scores(url_score=None, email_score=None, image_score=None):

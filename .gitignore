@@ -20,6 +20,9 @@ Thumbs.db
 # Large model files
 *.pt
 *.bin
+*.pkl
+*.onnx
+*.safetensors
 
 # VS Code
 .vscode/

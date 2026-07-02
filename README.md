@@ -1,440 +1,137 @@
-# PhishGuard: AI-Powered Multimodal Phishing Detection Framework
+<div align="center">
+  <h1>🛡️ PhishGuard</h1>
+  <h3>AI-Powered Multimodal Phishing Detection Framework</h3>
+  <img src="screenshots/framework_interface.png" alt="PhishGuard Interface" width="900" style="border-radius: 8px;">
+</div>
 
-<p align="center">
-  <img src="screenshots/framework_interface.png" alt="PhishGuard Interface" width="900">
-</p>
+<br />
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10-blue?style=for-the-badge&logo=python">
-  <img src="https://img.shields.io/badge/FastAPI-Backend-green?style=for-the-badge&logo=fastapi">
-  <img src="https://img.shields.io/badge/Flask-Frontend-black?style=for-the-badge&logo=flask">
-  <img src="https://img.shields.io/badge/XGBoost-URL%20Detection-orange?style=for-the-badge">
-  <img src="https://img.shields.io/badge/RoBERTa-Email%20Detection-red?style=for-the-badge">
-  <img src="https://img.shields.io/badge/LLaVA-Visual%20Analysis-purple?style=for-the-badge">
-</p>
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3.10-blue?style=flat-square&logo=python">
+  <img src="https://img.shields.io/badge/FastAPI-Backend-009688?style=flat-square&logo=fastapi">
+  <img src="https://img.shields.io/badge/Flask-Frontend-000000?style=flat-square&logo=flask">
+</div>
 
----
+## 📖 What is PhishGuard?
+Traditional phishing detection mechanisms rely on a single vector (like checking a URL against a blacklist). **PhishGuard** takes a multimodal approach, employing Artificial Intelligence to analyze phishing threats across multiple dimensions simultaneously: URL characteristics, email text semantics, website visual structures, and embedded QR codes.
 
-## Overview
-
-PhishGuard is an AI-powered multimodal phishing detection framework designed to detect modern phishing attacks using multiple analysis techniques. Unlike traditional phishing detectors that rely on a single modality, PhishGuard combines URL analysis, email classification, screenshot-based visual inspection, WHOIS intelligence, and QR code analysis into one unified cybersecurity system.
-
-The system integrates:
-
-* XGBoost for phishing URL detection
-* RoBERTa for phishing email classification
-* LLaVA 1.5-7B for screenshot-based phishing analysis
-* WHOIS domain intelligence scoring
-* QR code phishing detection
-* FastAPI backend with Flask frontend
-* Multimodal weighted score aggregation
+By aggregating intelligence from multiple domains, PhishGuard significantly reduces false positives and provides a robust defense against modern, sophisticated phishing attacks.
 
 ---
 
-# Key Features
-
-* URL phishing detection using XGBoost
-* Email phishing detection using RoBERTa
-* Screenshot-based webpage analysis using LLaVA
-* QR phishing (Quishing) detection
-* WHOIS domain intelligence scoring
-* Screenshot capture using Playwright
-* FastAPI backend API services
-* Flask frontend web interface
-* Multimodal phishing score aggregation
-* Natural-language phishing explanations
-* Redirect-chain screenshot capture
+## ⚡ Core Capabilities
+- **URL & Domain Intelligence:** Evaluates URL structure and WHOIS data to determine the trustworthiness of a link.
+- **Semantic Email Analysis:** Understands the context and urgency of email contents to catch social engineering attempts.
+- **Visual Webpage Inspection:** Uses Vision-Language Models to detect fake login pages and brand impersonation.
+- **QR Code "Quishing" Detection:** Extracts and scans hidden URLs embedded within QR codes.
+- **Image-to-Text (OCR) Processing:** Extracts text directly from screenshots/emails to analyze hidden payloads.
+- **Unified Risk Scoring:** Aggregates individual scores into a single, reliable verdict.
 
 ---
 
-# System Architecture
+## 🧠 Under The Hood: AI Models & Performance
 
-<p align="center">
-  <img src="screenshots/system_architecture.png" alt="System Architecture" width="1000">
-</p>
+PhishGuard orchestrates multiple machine learning models. *Note: The exact performance metrics below are left blank to be filled with the latest benchmark results.*
 
-The architecture contains:
+### 1. URL Analysis (XGBoost)
+Detects malicious patterns based on 10+ extracted features (URL length, entropy, special characters, etc.).
+- **Accuracy:** [ To be filled ]
+- **Precision / Recall:** [ To be filled ]
+- **F1-Score:** [ To be filled ]
 
-* URL Classification Module (XGBoost)
-* Email Classification Module (RoBERTa)
-* Screenshot Analysis Module (LLaVA)
-* WHOIS Domain Intelligence
-* QR Code Analysis
-* Multimodal Score Aggregation
-* FastAPI Backend Services
-* Flask Frontend Interface
+### 2. Email NLP Classification (RoBERTa)
+Analyzes the text of an email to detect phishing semantics.
+- **Accuracy:** [ To be filled ]
+- **Precision / Recall:** [ To be filled ]
+- **ROC-AUC:** [ To be filled ]
 
----
+### 3. Visual Analysis (LLaVA / Qwen-VL)
+Performs visual reasoning on webpage or email screenshots to identify credential harvesting and fake warnings.
+- **Screenshot Coverage:** [ To be filled ]
+- **Average Inference Time:** [ To be filled ]
 
-# Technology Stack
-
-| Component           | Technology   |
-| ------------------- | ------------ |
-| Backend API         | FastAPI      |
-| Frontend            | Flask        |
-| URL Detection       | XGBoost      |
-| Email Detection     | RoBERTa      |
-| Screenshot Analysis | LLaVA 1.5-7B |
-| Screenshot Capture  | Playwright   |
-| QR Detection        | OpenCV       |
-| Domain Intelligence | python-whois |
-| Language            | Python       |
-| Model Training      | Google Colab |
+### 4. OCR Processing (PaddleOCR)
+Supports multiple languages (including Vietnamese) to extract text directly from images before passing it to the NLP classification layer.
 
 ---
 
-# Project Structure
+## 🏗️ Architecture & Data Flow
 
-```bash
-PhishGuard/
-│
-├── backend/
-│   ├── services/
-│   ├── utils/
-│   ├── models/
-│   ├── results/
-│   ├── notebooks/
-│   ├── data/
-│   ├── main.py
-│   └── config.py
-│
-├── frontend/
-│   ├── static/
-│   ├── templates/
-│   ├── data/
-│   └── app.py
-│
-├── screenshots/
-├── demo/
-├── README.md
-├── requirements.txt
-├── requirements_frontend.txt
-└── .gitignore
-```
+PhishGuard separates concerns cleanly between a web frontend and a heavily AI-driven API backend.
+
+1. **User Input:** User submits a URL, text, image, or QR code via the **Flask** web application.
+2. **Backend Processing:** The request is routed to the **FastAPI** backend.
+3. **Multi-Model Inference:** 
+   - URLs are parsed and sent to the XGBoost module and WHOIS service.
+   - Text is tokenized and sent to the RoBERTa module.
+   - Images are processed via PaddleOCR or the Vision Model.
+4. **Aggregation Layer:** Individual risk scores are weighted (e.g., URL: 35%, Email: 40%, Visual: 25%) and combined.
+5. **Verdict:** A final JSON payload with the unified verdict and reasoning is returned to the user interface.
 
 ---
 
-# Datasets Used
+## 🚀 Getting Started
 
-## URL Dataset
-
-Dataset: `urldata.csv`
-
-* Total URLs: 450,176
-* Safe URLs: 77%
-* Phishing URLs: 23%
-
-Features extracted:
-
-* URL length
-* Hostname length
-* Path length
-* Number of digits
-* Number of dots
-* HTTPS presence
-* IP address usage
-* Suspicious keywords
-* URL entropy
-* Domain length
-* TLD length
-
----
-
-## Email Dataset
-
-Dataset: `Phishing_Email.csv`
-
-* Total samples: 18,101
-* Balanced using random undersampling
-* Binary classification
-
----
-
-# XGBoost URL Detection Module
-
-## Training Configuration
-
-| Parameter                | Value |
-| ------------------------ | ----- |
-| Trees                    | 400   |
-| Max Depth                | 8     |
-| Learning Rate            | 0.05  |
-| Classification Threshold | 0.7   |
-| Train/Test Split         | 80/20 |
-| scale_pos_weight         | ~3.35 |
-
----
-
-## XGBoost Results
-
-| Metric    | Value  |
-| --------- | ------ |
-| Accuracy  | 99.70% |
-| Precision | 1.00   |
-| Recall    | 0.99   |
-| F1-Score  | 0.99   |
-
-### Confusion Matrix
-
-<p align="center">
-  <img src="screenshots/xgboost_confusion_matrix.png" alt="XGBoost Confusion Matrix" width="650">
-</p>
-
----
-
-# RoBERTa Email Detection Module
-
-## Training Details
-
-The RoBERTa model was trained on Google Colab using NVIDIA T4 GPU support because local hardware resources were insufficient for transformer training.
-
-The best model checkpoint was downloaded after training and integrated into the FastAPI backend for inference.
-
-## Hyperparameters
-
-| Parameter         | Value         |
-| ----------------- | ------------- |
-| Model             | RoBERTa-base  |
-| Epochs            | 4             |
-| Max Token Length  | 256           |
-| Learning Rate     | 2e-5          |
-| Optimizer         | AdamW         |
-| Weight Decay      | 0.01          |
-| Scheduler         | Linear Warmup |
-| Gradient Clipping | Enabled       |
-
----
-
-## RoBERTa Results
-
-| Metric                | Value  |
-| --------------------- | ------ |
-| Accuracy              | 98.42% |
-| Precision             | 98.43% |
-| Recall                | 98.42% |
-| ROC-AUC               | 0.9987 |
-| Misclassified Samples | 33     |
-
----
-
-## Training Curves
-
-<p align="center">
-  <img src="screenshots/roberta_training.png" alt="RoBERTa Training Curves" width="900">
-</p>
-
----
-
-## ROC Curve
-
-<p align="center">
-  <img src="screenshots/roberta_roc.png" alt="RoBERTa ROC Curve" width="650">
-</p>
-
----
-
-## Confidence Distribution
-
-<p align="center">
-  <img src="screenshots/roberta_confidence_distribution.png" alt="Confidence Distribution" width="750">
-</p>
-
----
-
-# LLaVA Visual Screenshot Analysis
-
-PhishGuard uses LLaVA 1.5-7B for screenshot-based phishing analysis.
-
-The model identifies:
-
-* Fake login pages
-* Credential harvesting forms
-* Suspicious payment requests
-* Urgency messages
-* Brand impersonation
-* Visual phishing indicators
-
-## Important Implementation Detail
-
-LLaVA was deployed externally through Google Colab and connected to the FastAPI backend using a Cloudflare Tunnel endpoint.
-
-Since the temporary Cloudflare tunnel URL changes after each runtime session, the environment variable containing the endpoint is manually updated before execution.
-
-## LLaVA Performance
-
-| Metric                 | Value    |
-| ---------------------- | -------- |
-| Screenshot Coverage    | ~85%     |
-| Average Inference Time | 8–15 sec |
-
----
-
-# WHOIS Domain Intelligence
-
-The WHOIS module extracts domain age and assigns phishing risk scores using a multi-tier scoring mechanism.
-
-| Domain Age        | Risk Score |
-| ----------------- | ---------- |
-| Less than 30 days | 0.95       |
-| 31–90 days        | 0.85       |
-| 91–180 days       | 0.70       |
-| 181–365 days      | 0.55       |
-| 1–2 years         | 0.35       |
-| 2–5 years         | 0.20       |
-| More than 5 years | 0.10       |
-
----
-
-# QR Phishing Detection
-
-The QR module uses OpenCV to decode uploaded QR images and extract embedded URLs.
-
-The extracted URL is then analyzed using:
-
-* XGBoost phishing detection
-* WHOIS domain intelligence
-
-This module helps detect modern Quishing attacks.
-
----
-
-# Multimodal Score Aggregation
-
-Final phishing verdicts are generated using weighted multimodal aggregation.
-
-| Module              | Weight |
-| ------------------- | ------ |
-| URL Analysis        | 35%    |
-| Email Analysis      | 40%    |
-| Screenshot Analysis | 25%    |
-
-Classification thresholds:
-
-| Score Range | Verdict                  |
-| ----------- | ------------------------ |
-| > 0.75      | High Confidence Phishing |
-| 0.50–0.74   | Medium Phishing Risk     |
-| 0.30–0.49   | Suspicious               |
-| < 0.30      | Safe                     |
-
----
-
-# Installation & Setup
-
-## Clone Repository
-
+### 1. Prerequisites & Environment Setup
+Clone the repository and set up a Python 3.10 environment (Conda is recommended):
 ```bash
 git clone https://github.com/Nandan-1127/PhishGuard-Multimodal-Phishing-Detection-System.git
 cd PhishGuard-Multimodal-Phishing-Detection-System
-```
 
----
-
-## Create Conda Environment
-
-```bash
 conda create -n phishing_env python=3.10
 conda activate phishing_env
 ```
 
----
-
-## Install Backend Dependencies
-
+### 2. Install Dependencies
+You need to install packages for both the backend and frontend:
 ```bash
+# Backend dependencies
 pip install -r requirements.txt
-```
 
----
-
-## Install Frontend Dependencies
-
-```bash
+# Frontend dependencies
 pip install -r requirements_frontend.txt
 ```
 
----
+### 3. Running the Application
+The application runs as two separate services. You will need two terminal windows:
 
-## Run FastAPI Backend
-
+**Terminal 1 (Start Backend API):**
 ```bash
 cd backend
 uvicorn main:app --reload --port 8000
 ```
 
----
-
-## Run Flask Frontend
-
+**Terminal 2 (Start Frontend Web UI):**
 ```bash
 cd frontend
 python app.py
 ```
+*Access the UI at: `http://localhost:5000`*
 
 ---
 
-# Model Weights
+## 💾 Model Weights & Datasets
 
-Due to GitHub file size limitations, large trained model files are hosted externally.
+### External Model Weights
+Due to size constraints, the heavily trained `.pkl` and `.bin`/`.safetensors` files are hosted externally.
+- **[ Download RoBERTa Weights ](https://drive.google.com/drive/folders/14FlBVscJicX-30Y0Zu2txXqJ-pXwusWY?usp=drive_link)**
 
-## Download Links
-
-* RoBERTa Model Weights: https://drive.google.com/drive/folders/14FlBVscJicX-30Y0Zu2txXqJ-pXwusWY?usp=drive_link
-* RoBERTa Backup Checkpoint: https://drive.google.com/drive/folders/14FlBVscJicX-30Y0Zu2txXqJ-pXwusWY?usp=drive_link
-
-After downloading:
-
-Place files inside:
-
-```bash
+Place the downloaded files in the appropriate directories:
+```
 backend/models/RoBERTa_model/
-backend/backup/
+backend/models/xgboost_phishing_model.pkl
 ```
 
----
-
-# Demo Video
-
-Demo video covering:
-
-* URL phishing detection
-* Email phishing detection
-* QR code analysis
-* Screenshot phishing detection
-* WHOIS intelligence
-* LLaVA explanation system
+### Datasets
+- **URL Training Data (`urldata.csv`):** Contains ~450k URLs (77% Safe, 23% Phishing).
+- **Email Training Data (`Phishing_Email.csv`):** Contains ~18k balanced samples.
 
 ---
 
-# Future Improvements
+## 👥 Authors & Credits
+Developed as part of an academic research project exploring the use of modern AI for cybersecurity.
+- **Nandan Sunkara** - B.Tech Student, IIITDMJ
+- **Ansika Patti** - B.Tech Student, IIITDMJ
 
-* OCR-based phishing text extraction
-* Fine-tuned phishing-specific LLaVA model
-* DNS intelligence integration
-* Certificate transparency analysis
-* Multi-stage webpage snapshot analysis
-* Mamba-based email classification
-
----
-
-# Authors
-
-**Nandan Sunkara**  
-B.Tech Student  
-Indian Institute of Information Technology Design and Manufacturing Jabalpur (IIITDMJ)
-
-**Ansika Patti**  
-B.Tech Student  
-Indian Institute of Information Technology Design and Manufacturing Jabalpur (IIITDMJ)
-
----
-
-# Project Note
-
-Developed as part of an academic project exploring the use of artificial intelligence, machine learning, computer vision, and natural language processing for multimodal phishing detection and cybersecurity analysis.
-
----
-
-# License
-
+### License
 This project is licensed under the MIT License.

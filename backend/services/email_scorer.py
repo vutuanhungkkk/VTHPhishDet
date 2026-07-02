@@ -1,6 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
-from backend.config import ROBERTA_MODEL_PATH
+from config import ROBERTA_MODEL_PATH
  
 print("Loading RoBERTa model...")
 _tokenizer = AutoTokenizer.from_pretrained(ROBERTA_MODEL_PATH)
