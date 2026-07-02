@@ -1,7 +1,6 @@
 <div align="center">
   <h1>🛡️ PhishGuard</h1>
   <h3>AI-Powered Multimodal Phishing Detection Framework</h3>
-  <img src="screenshots/framework_interface.png" alt="PhishGuard Interface" width="900" style="border-radius: 8px;">
 </div>
 
 <br />
@@ -75,22 +74,20 @@ PhishGuard separates concerns cleanly between a web frontend and a heavily AI-dr
 ### 1. Prerequisites & Environment Setup
 Clone the repository and set up a Python 3.10 environment (Conda is recommended):
 ```bash
-git clone https://github.com/Nandan-1127/PhishGuard-Multimodal-Phishing-Detection-System.git
-cd PhishGuard-Multimodal-Phishing-Detection-System
+git clone https://github.com/vutuanhungkkk/VTHPhishDet.git
+cd VTHPhishDet
 
-conda create -n phishing_env python=3.10
-conda activate phishing_env
+conda create -n llm python=3.10
+conda activate llm
 ```
 
 ### 2. Install Dependencies
 You need to install packages for both the backend and frontend:
 ```bash
-# Backend dependencies
+# Cài đặt requirements cho project
 pip install -r requirements.txt
-
-# Frontend dependencies
-pip install -r requirements_frontend.txt
 ```
+*(Nếu bạn đã lỡ xóa file requirements.txt, hãy báo mình để mình tạo lại nhé!)*
 
 ### 3. Running the Application
 The application runs as two separate services. You will need two terminal windows:
@@ -114,7 +111,6 @@ python app.py
 
 ### External Model Weights
 Due to size constraints, the heavily trained `.pkl` and `.bin`/`.safetensors` files are hosted externally.
-- **[ Download RoBERTa Weights ](https://drive.google.com/drive/folders/14FlBVscJicX-30Y0Zu2txXqJ-pXwusWY?usp=drive_link)**
 
 Place the downloaded files in the appropriate directories:
 ```
@@ -123,15 +119,14 @@ backend/models/xgboost_phishing_model.pkl
 ```
 
 ### Datasets
-- **URL Training Data (`urldata.csv`):** Contains ~450k URLs (77% Safe, 23% Phishing).
-- **Email Training Data (`Phishing_Email.csv`):** Contains ~18k balanced samples.
+- **URL Training Data:** Contains ~450k URLs (77% Safe, 23% Phishing).
+- **Email Training Data:** Contains ~18k balanced samples.
 
 ---
 
 ## 👥 Authors & Credits
-Developed as part of an academic research project exploring the use of modern AI for cybersecurity.
-- **Nandan Sunkara** - B.Tech Student, IIITDMJ
-- **Ansika Patti** - B.Tech Student, IIITDMJ
+- **Vũ Tuấn Hùng** (vutuanhungkkk)
+- GitHub: [https://github.com/vutuanhungkkk](https://github.com/vutuanhungkkk)
 
 ### License
 This project is licensed under the MIT License.
