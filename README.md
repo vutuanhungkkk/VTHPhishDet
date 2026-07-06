@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🛡️ VTHPhishDet (PhishGuard)</h1>
+  <h1>🛡️ VTHPhishDet</h1>
   <h3>AI-Powered Multimodal Phishing Detection Framework</h3>
 </div>
 <div align="center">
@@ -31,7 +31,7 @@
 ---
 
 ## 📖 Introduction
-Traditional phishing detection mechanisms rely on a single vector (like checking a URL against a blacklist). **VTHPhishDet (PhishGuard)** takes a cutting-edge multimodal approach, employing Artificial Intelligence to analyze phishing threats across multiple dimensions simultaneously: URL characteristics, email text semantics, website visual structures, and embedded QR codes.
+Traditional phishing detection mechanisms rely on a single vector (like checking a URL against a blacklist). **VTHPhishDet** takes a cutting-edge multimodal approach, employing Artificial Intelligence to analyze phishing threats across multiple dimensions simultaneously: URL characteristics, email text semantics, website visual structures, and embedded QR codes.
 
 By aggregating intelligence from multiple domains, PhishGuard significantly reduces false positives and provides a robust defense against modern, sophisticated phishing attacks.
 
@@ -43,7 +43,7 @@ This framework utilizes a hybrid pipeline of specialized machine learning models
 
 - **URL Intelligence (XGBoost + WHOIS):** Analyzes lexical features of URLs (length, entropy, special chars) and domain age using WHOIS data to catch newly registered phishing domains.
 - **Email NLP (RoBERTa & Llama 3.2 SLM):** Processes the semantic meaning, urgency, and context of email bodies. Users can switch between a fast RoBERTa classifier or a highly capable Llama 3.2 Small Language Model.
-- **Visual Analysis (Gemini 1.5 Flash API):** Analyzes screenshots of suspicious emails or web pages to detect brand impersonation, deceptive UI, and fake security warnings using Google's generative multimodal AI.
+- **Visual Analysis (Gemini 3.5 Flash API):** Analyzes screenshots of suspicious emails or web pages to detect brand impersonation, deceptive UI, and fake security warnings using Google's generative multimodal AI.
 - **OCR Integration (PaddleOCR):** Extracts text embedded inside images/screenshots to feed into the NLP pipeline.
 - **QR Code Scanning:** Safely extracts hidden URLs from QR codes before routing them through the URL intelligence module.
 
