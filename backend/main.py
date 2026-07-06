@@ -1,4 +1,14 @@
-from fastapi import FastAPI, UploadFile, File
+import ssl
+import certifi
+
+_original_create_default_context = ssl.create_default_context
+def _patched_create_default_context(purpose=ssl.Purpose.SERVER_AUTH, *, cafile=None, capath=None, cadata=None):
+    if cafile is None and capath is None and cadata is None:
+        cafile = certifi.where()
+    return _original_create_default_context(purpose=purpose, cafile=cafile, capath=capath, cadata=cadata)
+ssl.create_default_context = _patched_create_default_context
+
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -6,11 +16,26 @@ import base64
 
 from services.url_scorer import score_url
 from services.email_scorer import score_email
+from services.llama_scorer import score_email_llama
 from services.whois_service import get_domain_info
 from services.vision_scorer import score_image
 from services.ocr_service import extract_text_from_image
 from utils.score_aggregator import aggregate_scores
 from utils.qr_extractor import extract_url_from_qr
+import requests
+
+def resolve_url(url: str) -> str:
+    """Follows redirects to find the final destination URL."""
+    try:
+        # Some servers block HEAD requests, but it's faster.
+        r = requests.head(url, allow_redirects=True, timeout=5)
+        if r.status_code == 405:
+            r = requests.get(url, allow_redirects=True, timeout=5, stream=True)
+            r.close()
+        return r.url
+    except Exception:
+        return url
+
 app = FastAPI(
     title="Multimodal Phishing Detector",
     description="Detects phishing using XGBoost (URL), RoBERTa (Email)",
@@ -30,10 +55,12 @@ class URLRequest(BaseModel):
 
 class EmailRequest(BaseModel):
     text: str
+    model: Optional[str] = "roberta"
 
 class FullScanRequest(BaseModel):
     url: Optional[str] = None
     email_text: Optional[str] = None
+    email_model: Optional[str] = "roberta"
 
 
 @app.get("/")
@@ -72,8 +99,12 @@ def scan_url(request: URLRequest):
 
 @app.post("/scan/email")
 def scan_email(request: EmailRequest):
-    """Score email using RoBERTa. Returns phishing score + correct confidence."""
-    result = score_email(request.text)
+    """Score email using RoBERTa or Llama. Returns phishing score + correct confidence."""
+    if request.model == "llama":
+        result = score_email_llama(request.text)
+    else:
+        result = score_email(request.text)
+        
     return {
         "email_score": result.get("email_score"),
         "safe_score": result.get("safe_score"),
@@ -83,8 +114,8 @@ def scan_email(request: EmailRequest):
 
 
 @app.post("/scan/email_image")
-async def scan_email_image(file: UploadFile = File(...)):
-    """Extract text from email image using PaddleOCR and score using RoBERTa."""
+async def scan_email_image(file: UploadFile = File(...), model: str = Form("roberta")):
+    """Extract text from email image using PaddleOCR and score using RoBERTa or Llama."""
     contents = await file.read()
     image_b64 = base64.b64encode(contents).decode("utf-8")
     
@@ -95,8 +126,11 @@ async def scan_email_image(file: UploadFile = File(...)):
     
     extracted_text = ocr_result["text"]
     
-    # 2. Score extracted text via RoBERTa
-    result = score_email(extracted_text)
+    # 2. Score extracted text via RoBERTa or Llama
+    if model == "llama":
+        result = score_email_llama(extracted_text)
+    else:
+        result = score_email(extracted_text)
     
     return {
         "email_score": result.get("email_score"),
@@ -132,7 +166,10 @@ def full_scan(request: FullScanRequest):
             url_score = min(1.0, url_score + boost)
 
     if request.email_text:
-        email_result = score_email(request.email_text)
+        if request.email_model == "llama":
+            email_result = score_email_llama(request.email_text)
+        else:
+            email_result = score_email(request.email_text)
         email_score = email_result.get("email_score")
 
     verdict = aggregate_scores(url_score=url_score, email_score=email_score)
@@ -153,8 +190,10 @@ async def scan_qr(file: UploadFile = File(...)):
         return {"qr_url": None, "error": qr_result.get("error", "No QR URL found")}
 
     extracted_url = qr_result["url"]
-    url_result = score_url(extracted_url)
-    whois_result = get_domain_info(extracted_url)
+    final_url = resolve_url(extracted_url)
+
+    url_result = score_url(final_url)
+    whois_result = get_domain_info(final_url)
 
     url_score = url_result.get("url_score")
     if url_score is not None and whois_result.get("is_young_domain"):
@@ -165,7 +204,7 @@ async def scan_qr(file: UploadFile = File(...)):
     verdict = aggregate_scores(url_score=url_score)
 
     return {
-        "qr_url": extracted_url,
+        "qr_url": final_url,
         "url_score": round(url_score, 4) if url_score is not None else None,
         "label": "phishing" if (url_score or 0) >= 0.5 else "safe",
         "features_used": url_result.get("features_used"),

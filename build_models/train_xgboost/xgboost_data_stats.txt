@@ -1,0 +1,19 @@
+XGBoost Training Data Statistics
+================================
+Raw data total rows: 651191
+Cleaned data total rows: 651191
+
+Label Distribution (0: Benign, 1: Malicious):
+  Benign (0): 428103 (65.74%)
+  Malicious (1): 223088 (34.26%)
+
+Columns after cleaning:
+url, type, label
+
+Sample Data Format (first 5 rows):
+                                                                                                                                                                                                                                        url       type  label
+                                                                                                                                                                                                                           br-icloud.com.br   phishing      1
+                                                                                                                                                                                                        mp3raid.com/music/krizz_kaliko.html     benign      0
+                                                                                                                                                                                                            bopsecrets.org/rexroth/cr/1.htm     benign      0
+                                                                                                                                                   http://www.garage-pirenne.be/index.php?option=com_content&view=article&id=70&vsig70_0=15 defacement      1
+http://adventure-nicaragua.net/index.php?option=com_mailto&tmpl=component&link=aHR0cDovL2FkdmVudHVyZS1uaWNhcmFndWEubmV0L2luZGV4LnBocD9vcHRpb249Y29tX2NvbnRlbnQmdmlldz1hcnRpY2xlJmlkPTQ3OmFib3V0JmNhdGlkPTM2OmRlbW8tYXJ0aWNsZXMmSXRlbWlkPTU0 defacement      1

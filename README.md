@@ -1,76 +1,99 @@
 <div align="center">
+  <h1>🛡️ VTHPhishDet (PhishGuard)</h1>
   <h3>AI-Powered Multimodal Phishing Detection Framework</h3>
 </div>
-
+DEMO: 🔗 **[Demo Video](https://drive.google.com/file/d/1J-_69e6KT_klt2xPMkVhdI8xCQhdF9ZM/view?usp=drive_link)**
+![](gif/test.gif)
 <br />
 
 <div align="center">
   <img src="https://img.shields.io/badge/Python-3.10-blue?style=flat-square&logo=python">
   <img src="https://img.shields.io/badge/FastAPI-Backend-009688?style=flat-square&logo=fastapi">
   <img src="https://img.shields.io/badge/Flask-Frontend-000000?style=flat-square&logo=flask">
+  <img src="https://img.shields.io/badge/Transformers-HuggingFace-yellow?style=flat-square">
+  <img src="https://img.shields.io/badge/Gemini_1.5_Flash-Vision-orange?style=flat-square">
 </div>
 
-Traditional phishing detection mechanisms rely on a single vector (like checking a URL against a blacklist). **VTHPhishDet** takes a multimodal approach, employing Artificial Intelligence to analyze phishing threats across multiple dimensions simultaneously: URL characteristics, email text semantics, website visual structures, and embedded QR codes.
+---
+
+## 📑 Table of Contents
+- [📖 Introduction](#-introduction)
+- [⚙️ Core Pipeline & Technologies](#-core-pipeline--technologies)
+- [📊 Training & Evaluation Results](#-training--evaluation-results)
+- [🏗️ Architecture & Data Flow](#-architecture--data-flow)
+- [🚀 Setup & Installation](#-setup--installation)
+- [💡 Usage](#-usage)
+- [👥 Authors](#-authors)
+
+---
+
+## 📖 Introduction
+Traditional phishing detection mechanisms rely on a single vector (like checking a URL against a blacklist). **VTHPhishDet (PhishGuard)** takes a cutting-edge multimodal approach, employing Artificial Intelligence to analyze phishing threats across multiple dimensions simultaneously: URL characteristics, email text semantics, website visual structures, and embedded QR codes.
 
 By aggregating intelligence from multiple domains, PhishGuard significantly reduces false positives and provides a robust defense against modern, sophisticated phishing attacks.
 
 ---
 
-## ⚡ Core Capabilities
-- **URL & Domain Intelligence:** Evaluates URL structure and WHOIS data to determine the trustworthiness of a link.
-- **Semantic Email Analysis:** Understands the context and urgency of email contents to catch social engineering attempts.
-- **Visual Webpage Inspection:** Uses Vision-Language Models to detect fake login pages and brand impersonation.
-- **QR Code "Quishing" Detection:** Extracts and scans hidden URLs embedded within QR codes.
-- **Image-to-Text (OCR) Processing:** Extracts text directly from screenshots/emails to analyze hidden payloads.
-- **Unified Risk Scoring:** Aggregates individual scores into a single, reliable verdict.
+## ⚙️ Core Pipeline & Technologies
+
+This framework utilizes a hybrid pipeline of specialized machine learning models and APIs:
+
+- **URL Intelligence (XGBoost + WHOIS):** Analyzes lexical features of URLs (length, entropy, special chars) and domain age using WHOIS data to catch newly registered phishing domains.
+- **Email NLP (RoBERTa & Llama 3.2 SLM):** Processes the semantic meaning, urgency, and context of email bodies. Users can switch between a fast RoBERTa classifier or a highly capable Llama 3.2 Small Language Model.
+- **Visual Analysis (Gemini 1.5 Flash API):** Analyzes screenshots of suspicious emails or web pages to detect brand impersonation, deceptive UI, and fake security warnings using Google's generative multimodal AI.
+- **OCR Integration (PaddleOCR):** Extracts text embedded inside images/screenshots to feed into the NLP pipeline.
+- **QR Code Scanning:** Safely extracts hidden URLs from QR codes before routing them through the URL intelligence module.
+
+**Tech Stack:**
+- **Backend:** FastAPI, Uvicorn, Python 3.10
+- **Frontend:** Flask, HTML5, CSS3, Vanilla JavaScript
+- **AI/ML:** XGBoost, HuggingFace Transformers, Unsloth (for Llama finetuning), Google Generative AI (Gemini), PaddleOCR.
 
 ---
 
-## 🧠 Under The Hood: AI Models & Performance
+## 📊 Training & Evaluation Results
 
-PhishGuard orchestrates multiple machine learning models. *Note: The exact performance metrics below are left blank to be filled with the latest benchmark results.*
+The models in this repository have been fine-tuned on custom datasets. You can find the notebooks, training scripts, and evaluation metrics in the `build_models/` directory.
 
 ### 1. URL Analysis (XGBoost)
-Detects malicious patterns based on 10+ extracted features (URL length, entropy, special characters, etc.).
-- **Accuracy:** [ To be filled ]
-- **Precision / Recall:** [ To be filled ]
-- **F1-Score:** [ To be filled ]
+Trained on a massive dataset of **651,191** URLs (65.74% Safe, 34.26% Phishing), extracting specific lexical features for structural analysis.
+- **Accuracy:** `92.09%`
+- **F1 Score:** `0.9198`
+- **ROC-AUC:** `0.9714`
+- **Location:** `build_models/train_xgboost/`
 
-### 2. Email NLP Classification (RoBERTa)
-Analyzes the text of an email to detect phishing semantics.
-- **Accuracy:** [ To be filled ]
-- **Precision / Recall:** [ To be filled ]
-- **ROC-AUC:** [ To be filled ]
+### 2. Email NLP (RoBERTa)
+- **Accuracy:** `98.62%`
+- **F1 Score:** `0.9862`
+- **ROC-AUC:** `0.9999`
+- **Location:** `build_models/train_roberta/`
 
-### 3. Visual Analysis (LLaVA / Qwen-VL)
-Performs visual reasoning on webpage or email screenshots to identify credential harvesting and fake warnings.
-- **Screenshot Coverage:** [ To be filled ]
-- **Average Inference Time:** [ To be filled ]
-
-### 4. OCR Processing (PaddleOCR)
-Supports multiple languages (including Vietnamese) to extract text directly from images before passing it to the NLP classification layer.
+### 3. Email NLP (Llama 3.2 SLM)
+Fine-tuned using Unsloth and PEFT (Parameter-Efficient Fine-Tuning) on the same balanced dataset (59,976 train samples, 12,852 test samples) to deeply understand complex social engineering tactics.
+- **Accuracy:** `98.33%`
+- **Weighted F1-Score:** `0.99`
+- **Location:** `build_models/train_SLM/finetune-slm-email-phishing.ipynb`
 
 ---
 
 ## 🏗️ Architecture & Data Flow
 
-PhishGuard separates concerns cleanly between a web frontend and a heavily AI-driven API backend.
-
-1. **User Input:** User submits a URL, text, image, or QR code via the **Flask** web application.
-2. **Backend Processing:** The request is routed to the **FastAPI** backend.
+1. **User Input:** User submits a URL, text, image, or QR code via the **Flask** web UI.
+2. **Backend Processing:** The request is routed to the **FastAPI** backend endpoint.
 3. **Multi-Model Inference:** 
-   - URLs are parsed and sent to the XGBoost module and WHOIS service.
-   - Text is tokenized and sent to the RoBERTa module.
-   - Images are processed via PaddleOCR or the Vision Model.
-4. **Aggregation Layer:** Individual risk scores are weighted (e.g., URL: 35%, Email: 40%, Visual: 25%) and combined.
-5. **Verdict:** A final JSON payload with the unified verdict and reasoning is returned to the user interface.
+   - URLs are parsed and evaluated by **XGBoost** and WHOIS APIs.
+   - Text is evaluated by the loaded **RoBERTa** or **Llama 3.2** weights.
+   - Screenshots are analyzed directly by **Gemini 1.5 Flash API**.
+   - Images with text go through **PaddleOCR**.
+4. **Aggregation Layer:** Individual risk scores are weighted (e.g., URL: 35%, Email: 40%, Visual: 25%) and aggregated.
+5. **Verdict:** A JSON payload with the unified risk score and rationale is returned.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Setup & Installation
 
-### 1. Prerequisites & Environment Setup
-Clone the repository and set up a Python 3.10 environment (Conda is recommended):
+### 1. Prerequisites
+Clone the repository and set up a Python 3.10 conda environment:
 ```bash
 git clone https://github.com/vutuanhungkkk/VTHPhishDet.git
 cd VTHPhishDet
@@ -80,23 +103,28 @@ conda activate llm
 ```
 
 ### 2. Install Dependencies
-You need to install packages for both the backend and frontend:
 ```bash
-# Cài đặt requirements cho project
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 ```
-*(Nếu bạn đã lỡ xóa file requirements.txt, hãy báo mình để mình tạo lại nhé!)*
 
-### 3. Running the Application
+### 3. Environment Variables (Gemini API)
+The vision scoring module uses Google's Gemini API. You must configure your API key.
+1. In the `backend/` directory, create or edit the `.env` file.
+2. Add your key:
+```env
+GEMINI_API_KEY=your_google_gemini_api_key_here
+```
+
+### 4. Running the Application
 The application runs as two separate services. You will need two terminal windows:
 
-**Terminal 1 (Start Backend API):**
+**Terminal 1 (Backend API):**
 ```bash
 cd backend
 uvicorn main:app --reload --port 8000
 ```
 
-**Terminal 2 (Start Frontend Web UI):**
+**Terminal 2 (Frontend Web UI):**
 ```bash
 cd frontend
 python app.py
@@ -107,24 +135,27 @@ python app.py
 
 ## 💾 Model Weights & Datasets
 
-### External Model Weights
-Due to size constraints, the heavily trained `.pkl` and `.bin`/`.safetensors` files are hosted externally.
+### 1. Download Pre-trained Models
+Due to size constraints, the trained models are hosted externally:
+- **[Models Download Link](https://drive.google.com/drive/folders/1SkoxJcZf04F1eXcGYUU4b_ALkbDbJ6w5?usp=sharing)** (Includes SLM adapters, XGBoost `.pkl`, and RoBERTa weights).
+Place the downloaded files into their respective directories (`backend/models/` and `build_models/models/`).
 
-Place the downloaded files in the appropriate directories:
-```
-backend/models/RoBERTa_model/
-backend/models/xgboost_phishing_model.pkl
-```
-
-### Datasets
-- **URL Training Data:** Contains ~450k URLs (77% Safe, 23% Phishing).
-- **Email Training Data:** Contains ~18k balanced samples.
+### 2. Training & Evaluation Data
+- **URL Training Data (XGBoost):** 651,191 URLs (65.74% Safe, 34.26% Phishing).
+  - 🔗 **[Download XGBoost Data](https://drive.google.com/drive/folders/12lSGzYj6NBPkcsuPJNZQkeHmYrMum1iI?usp=sharing)**
+- **Email Training Data (RoBERTa & SLM):** 85,680 balanced samples (50% Safe, 50% Phishing), cleaned from 367,912 raw emails.
+  - 🔗 **[Download Email Data](https://drive.google.com/drive/folders/14GFn-DF0RuJU0uQMJjX75hbX0C79VPnf?usp=sharing)**
 
 ---
 
-## 👥 Authors & Credits
+## 💡 Usage
+- **URL Tab:** Paste any suspicious link. The system will extract features and query the domain age.
+- **Email Tab:** Paste email text or upload an image of an email. Select between RoBERTa (fast) or Llama 3.2 (advanced).
+- **Screenshot Tab:** Upload a screenshot of a suspicious login page or system warning. The Gemini API will visually scan for brand impersonation.
+- **QR Code Tab:** Upload an image of a QR code to extract and scan the underlying link.
+
+---
+
+## 👥 Authors
 - **Vũ Tuấn Hùng** (vutuanhungkkk)
 - GitHub: [https://github.com/vutuanhungkkk](https://github.com/vutuanhungkkk)
-
-### License
-This project is licensed under the MIT License.

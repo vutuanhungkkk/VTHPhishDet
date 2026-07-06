@@ -1,4 +1,8 @@
 import os
+from dotenv import load_dotenv
+
+# Nạp file .env ngay từ đầu
+load_dotenv()
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -7,19 +11,24 @@ MODELS_DIR = os.path.join(BASE_DIR, "models")
 
 XGBOOST_MODEL_PATH = os.path.join(MODELS_DIR, "xgboost_phishing_model.pkl")
 ROBERTA_MODEL_PATH = os.path.join(MODELS_DIR, "RoBERTa_model")
+LLAMA_MODEL_PATH = os.path.join(BASE_DIR, "..", "build_models", "models", "SLM_adapter")
 print(XGBOOST_MODEL_PATH)
 print(ROBERTA_MODEL_PATH)
+print(LLAMA_MODEL_PATH)
 
-VISION_MODEL_ID = os.getenv("VISION_MODEL_ID", "Qwen/Qwen2-VL-2B-Instruct")
-VISION_MAX_NEW_TOKENS = int(os.getenv("VISION_MAX_NEW_TOKENS", "128"))
-VISION_USE_4BIT = os.getenv("VISION_USE_4BIT", "1") not in {"0", "false", "False"}
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL_VERSION = os.getenv("GEMINI_MODEL_VERSION", "gemini-1.5-flash")
 VISION_PROMPT = os.getenv(
 	"VISION_PROMPT",
-	"You are a cybersecurity analyst. Inspect the provided image (which may be a webpage, email, or message) and determine if it is phishing or safe. "
-	"Return ONLY valid JSON with keys risk_score, label, and rationale. "
-	"risk_score must be a float from 0.0 to 1.0 (1.0 means high risk of phishing, 0.0 means completely safe). "
-	"Use label 'safe' for normal, legitimate communications (like job rejections, news, standard notifications). "
-	"Use label 'phishing' only if the image shows malicious intent, demands urgent action, asks for passwords, or impersonates a brand."
+	"You are an expert cybersecurity analyst specializing in visual phishing detection. "
+	"Examine the provided screenshot (webpage, email, or message) very carefully for suspicious indicators: "
+	"1) Brand impersonation (fake logos, blurry images, slight misspellings). "
+	"2) Deceptive UI elements (fake 'Login' windows, 'Update Required' popups, or fake security warnings). "
+	"3) Urgency or threats (e.g., 'Account suspended', 'Action required immediately'). "
+	"4) Inconsistencies (mismatch between the stated brand and the overall design quality). "
+	"Return ONLY valid JSON with keys: risk_score (float 0.0 to 1.0, where 1.0 is definitely phishing), "
+	"label ('phishing', 'suspicious', or 'safe'), and rationale (a brief explanation of the specific suspicious signs found). "
+	"Do not output markdown formatting around the JSON, just the raw JSON object."
 )
 
 

@@ -9,6 +9,25 @@ let emailImageFile = null;
 
 // ── Initialization ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // Health check polling
+  const checkHealth = async () => {
+    try {
+      const res = await fetch('/api/health');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status === 'ok' || data.status === 'running') {
+          const loader = $('initial-loader');
+          if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => loader.remove(), 500);
+          }
+          return; // Done
+        }
+      }
+    } catch (e) {}
+    setTimeout(checkHealth, 2000);
+  };
+  checkHealth();
   // Tabs
   $$('.nav-tab').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -89,20 +108,23 @@ async function scanUrl() {
 
 async function scanEmail() {
   const text = $('email-input').value.trim();
+  const model = document.querySelector('input[name="email-model"]:checked').value;
   if (!text) { shake($('email-input')); return; }
-  setLoading(true, 'Processing email through RoBERTa...');
+  setLoading(true, `Processing email through ${model === 'llama' ? 'Llama' : 'RoBERTa'}...`);
   try {
-    const data = await postJSON('/api/scan/email', { text });
+    const data = await postJSON('/api/scan/email', { text, model });
     renderResults(data, 'email');
   } catch (e) { showError(e.message); } finally { setLoading(false); }
 }
 
 async function scanEmailImage() {
   if (!emailImageFile) { shake($('email-image-dropzone')); return; }
-  setLoading(true, 'Extracting text via OCR and scoring with RoBERTa...');
+  const model = document.querySelector('input[name="email-model"]:checked').value;
+  setLoading(true, `Extracting text via OCR and scoring with ${model === 'llama' ? 'Llama' : 'RoBERTa'}...`);
   try {
     const fd = new FormData();
     fd.append('file', emailImageFile);
+    fd.append('model', model);
     const resp = await fetch('/api/scan/email_image', { method: 'POST', body: fd });
     const data = await resp.json();
     if (data.error) throw new Error(data.error);

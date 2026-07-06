@@ -1,0 +1,11 @@
+RoBERTa Phishing Email Classifier - Results
+==================================================
+Accuracy  : 0.9862
+Precision : 0.9866
+Recall    : 0.9862
+F1 Score  : 0.9862
+ROC-AUC   : 0.9999
+==================================================
+Train size: 59976
+Val size  : 12852
+Test size : 12852

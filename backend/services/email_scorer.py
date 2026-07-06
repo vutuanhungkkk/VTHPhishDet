@@ -26,11 +26,23 @@ def score_email(text: str) -> dict:
     if not text or not text.strip():
         return {"email_score": None, "error": "Empty input"}
  
+    import re
+    def clean_text(t):
+        t = str(t)
+        t = re.sub(r'<[^>]+>', ' ', t)
+        t = re.sub(r'(?i)(Message-ID|Date|From|To|Subject|MIME-Version|Content-Type|Content-Transfer-Encoding|Bcc):.*?(?=\n|$)', ' ', t)
+        t = re.sub(r'\s+', ' ', t).strip()
+        return t
+
+    cleaned_text = clean_text(text)
+    if not cleaned_text:
+        return {"email_score": None, "error": "Empty input after cleaning"}
+
     inputs = _tokenizer(
-        text,
+        cleaned_text,
         return_tensors="pt",
         truncation=True,
-        max_length=512,
+        max_length=256,
         padding=True
     )
     inputs = {k: v.to(_device) for k, v in inputs.items()}

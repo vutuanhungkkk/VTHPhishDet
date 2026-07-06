@@ -1,0 +1,10 @@
+XGBoost URL Classifier - Results
+==================================================
+Accuracy  : 0.9209
+Precision : 0.9215
+Recall    : 0.9209
+F1 Score  : 0.9198
+ROC-AUC   : 0.9714
+==================================================
+Train size: 520952
+Test size : 130239

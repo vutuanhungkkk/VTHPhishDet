@@ -1,167 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>VTHPhishDet — Multimodal Phishing Detection</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/static/css/style.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VTHPhishDet — Multimodal Phishing Detection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
 </head>
+
 <body>
 
-<div class="app-shell">
+  <div id="initial-loader"
+    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease;">
+    <div class="spinner" style="width: 50px; height: 50px; border-width: 4px; margin-bottom: 20px;"></div>
+    <h2 style="color: var(--text);">Initializing system.....</h2>
+    <p style="color: var(--text-muted); margin-top: 10px; text-align: center; max-width: 400px; line-height: 1.5;">
+      Loading AI models (XGBoost, RoBERTa, Llama).<br />This process may take some time (especially during the first
+      run).</p>
+  </div>
 
-  <!-- HEADER -->
-  <header class="header">
-    <div class="brand">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L3 7v6c0 5.25 3.83 9.15 9 10 5.17-.85 9-4.75 9-10V7l-9-5z"/>
-          <path d="M9 12l2 2 4-4"/>
-        </svg>
+  <div class="app-shell">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M12 2L3 7v6c0 5.25 3.83 9.15 9 10 5.17-.85 9-4.75 9-10V7l-9-5z" />
+            <path d="M9 12l2 2 4-4" />
+          </svg>
+        </div>
+        <div class="brand-name">VTHPhishDet</div>
       </div>
-      <div class="brand-name">VTHPhishDet</div>
-    </div>
-    <div class="model-tags">
-      <span class="mtag mtag-author">AUTHOR: Vũ Tuấn Hùng</span>
-    </div>
-  </header>
-
-  <!-- MAIN AREA -->
-  <main class="main-area">
-
-    <!-- LEFT PANEL: NAV & INPUTS -->
-    <div class="left-panel">
-      <!-- TABS -->
-      <div class="nav-tabs">
-        <button class="nav-tab active" data-tab="url">URL</button>
-        <button class="nav-tab" data-tab="email">Email</button>
-        <button class="nav-tab" data-tab="image">Image</button>
-        <button class="nav-tab" data-tab="qr">QR Code</button>
+      <div class="model-tags">
+        <span class="mtag mtag-author">AUTHOR: Vũ Tuấn Hùng</span>
       </div>
+    </header>
 
-      <!-- INPUT PANELS -->
-      <div class="panels-wrap">
-        <!-- URL PANEL -->
-        <div class="tab-panel active" id="tab-url">
-          <h2 class="panel-title">URL Analysis</h2>
-          <p class="panel-desc">Analyze URLs using XGBoost and WHOIS intelligence.</p>
-          <div class="input-group">
-            <input class="text-input" id="url-input" type="text" placeholder="https://suspicious-site.com"/>
-            <button class="btn" id="btn-scan-url">Scan URL</button>
-          </div>
+    <!-- MAIN AREA -->
+    <main class="main-area">
+
+      <!-- LEFT PANEL: NAV & INPUTS -->
+      <div class="left-panel">
+        <!-- TABS -->
+        <div class="nav-tabs">
+          <button class="nav-tab active" data-tab="url">URL</button>
+          <button class="nav-tab" data-tab="email">Email</button>
+          <button class="nav-tab" data-tab="image">Screenshot</button>
+          <button class="nav-tab" data-tab="qr">QR Code</button>
         </div>
 
-        <!-- EMAIL PANEL -->
-        <div class="tab-panel" id="tab-email">
-          <h2 class="panel-title">Email Analysis</h2>
-          <p class="panel-desc">RoBERTa detects phishing language and urgency tactics.</p>
-          <textarea class="text-input textarea" id="email-input" placeholder="Paste full email text..."></textarea>
-          <button class="btn" id="btn-scan-email">Analyze Email Text</button>
-          
-          <div style="margin: 1.5rem 0; text-align: center; color: var(--text-muted); font-size: 0.875rem;">— OR UPLOAD IMAGE —</div>
-
-          <div class="upload-zone" id="email-image-dropzone">
-            <svg width="24" height="24" viewBox="0 0 36 36" fill="none"><rect x="2" y="4" width="32" height="28" rx="3" stroke="currentColor" stroke-width="2"/><path d="M2 26l8-9 7 7 5-5 8 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="11" cy="13" r="3" stroke="currentColor" stroke-width="2"/></svg>
-            <div class="upload-text">Drop email screenshot here</div>
-            <div class="upload-hint">Click to browse (PNG, JPG)</div>
-            <input type="file" id="email-image-file" accept="image/*" class="file-hidden"/>
-          </div>
-          <div class="upload-preview hidden" id="email-image-preview-wrap">
-            <img id="email-image-preview-img" src="" alt="preview"/>
-            <div><button class="btn-remove" id="email-image-remove">Remove</button></div>
-          </div>
-          <button class="btn" id="btn-scan-email-image">OCR & Analyze Email Image</button>
-        </div>
-
-        <!-- IMAGE UPLOAD PANEL -->
-        <div class="tab-panel" id="tab-image">
-          <h2 class="panel-title">Image Upload</h2>
-          <p class="panel-desc">Upload screenshot of suspicious webpage for local Llama 3.2 analysis.</p>
-          <div class="upload-zone" id="image-dropzone">
-            <svg width="24" height="24" viewBox="0 0 36 36" fill="none"><rect x="2" y="4" width="32" height="28" rx="3" stroke="currentColor" stroke-width="2"/><path d="M2 26l8-9 7 7 5-5 8 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="11" cy="13" r="3" stroke="currentColor" stroke-width="2"/></svg>
-            <div class="upload-text">Drop image here</div>
-            <div class="upload-hint">Click to browse (PNG, JPG)</div>
-            <input type="file" id="image-file" accept="image/*" class="file-hidden"/>
-          </div>
-          <div class="upload-preview hidden" id="image-preview-wrap">
-            <img id="image-preview-img" src="" alt="preview"/>
-            <div><button class="btn-remove" id="image-remove">Remove</button></div>
-          </div>
-          <button class="btn" id="btn-scan-image">Score with Vision Model</button>
-        </div>
-
-        <!-- QR PANEL -->
-        <div class="tab-panel" id="tab-qr">
-          <h2 class="panel-title">QR Code Scanner</h2>
-          <p class="panel-desc">Decode and analyze QR code URLs.</p>
-          <div class="upload-zone" id="qr-dropzone">
-            <svg width="24" height="24" viewBox="0 0 36 36" fill="none"><rect x="3" y="3" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2"/><rect x="21" y="3" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2"/><rect x="3" y="21" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2"/><rect x="21" y="21" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2"/></svg>
-            <div class="upload-text">Drop QR code here</div>
-            <div class="upload-hint">Click to browse (PNG, JPG)</div>
-            <input type="file" id="qr-file" accept="image/*" class="file-hidden"/>
-          </div>
-          <div class="upload-preview hidden" id="qr-preview-wrap">
-            <img id="qr-preview-img" src="" alt="QR preview"/>
-            <div><button class="btn-remove" id="qr-remove">Remove</button></div>
-          </div>
-          <button class="btn" id="btn-scan-qr">Decode + Scan</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- RIGHT PANEL: RESULTS -->
-    <div class="right-panel">
-      <!-- Initial Placeholder -->
-      <div class="placeholder" id="placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <h2>Ready for Analysis</h2>
-        <p>Select a scan method on the left to begin.</p>
-      </div>
-
-      <!-- Loading State -->
-      <div class="loading-wrap hidden" id="loading">
-        <div class="spinner"></div>
-        <div class="loading-label" id="loading-label">Analyzing...</div>
-      </div>
-
-      <!-- Results Data -->
-      <div class="results-content hidden" id="results-section">
-        
-        <div class="verdict-card" id="verdict-card">
-          <div class="v-left">
-            <div class="v-icon" id="verdict-icon-wrap">?</div>
-            <div>
-              <div class="v-main" id="verdict-main">—</div>
-              <div class="v-sub" id="verdict-sub"></div>
+        <!-- INPUT PANELS -->
+        <div class="panels-wrap">
+          <!-- URL PANEL -->
+          <div class="tab-panel active" id="tab-url">
+            <h2 class="panel-title">URL Analysis</h2>
+            <p class="panel-desc">Analyze URLs using XGBoost and WHOIS intelligence.</p>
+            <div class="input-group">
+              <input class="text-input" id="url-input" type="text" placeholder="https://suspicious-site.com" />
+              <button class="btn" id="btn-scan-url">Scan URL</button>
             </div>
           </div>
-        </div>
 
-        <div class="scores-wrap" id="scores-grid"></div>
-        
-        <div class="details-wrap" id="details-grid"></div>
+          <!-- EMAIL PANEL -->
+          <div class="tab-panel" id="tab-email">
+            <h2 class="panel-title">Email Analysis</h2>
+            <p class="panel-desc">RoBERTa or Llama detects phishing language and urgency tactics.</p>
+            <div class="model-selection" style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+              <label style="margin-right: 1.5rem; cursor: pointer;">
+                <input type="radio" name="email-model" value="roberta" checked style="margin-right: 0.3rem;"> RoBERTa
+                (Fast, Default)
+              </label>
+              <label style="cursor: pointer;">
+                <input type="radio" name="email-model" value="llama" style="margin-right: 0.3rem;"> Llama 3.2 (High
+                Accuracy)
+              </label>
+            </div>
+            <textarea class="text-input textarea" id="email-input" placeholder="Paste full email text..."></textarea>
+            <button class="btn" id="btn-scan-email">Analyze Email Text</button>
 
-        <div class="screenshot-wrap hidden" id="screenshot-card">
-          <div class="sc-header">
-            Visual Preview
-            <span class="redirect-badge hidden" id="redirect-badge">Redirected</span>
+            <div style="margin: 1.5rem 0; text-align: center; color: var(--text-muted); font-size: 0.875rem;">— OR
+              UPLOAD IMAGE —</div>
+
+            <div class="upload-zone" id="email-image-dropzone">
+              <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+                <rect x="2" y="4" width="32" height="28" rx="3" stroke="currentColor" stroke-width="2" />
+                <path d="M2 26l8-9 7 7 5-5 8 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  fill="none" />
+                <circle cx="11" cy="13" r="3" stroke="currentColor" stroke-width="2" />
+              </svg>
+              <div class="upload-text">Drop email screenshot here</div>
+              <div class="upload-hint">Click to browse (PNG, JPG)</div>
+              <input type="file" id="email-image-file" accept="image/*" class="file-hidden" />
+            </div>
+            <div class="upload-preview hidden" id="email-image-preview-wrap">
+              <img id="email-image-preview-img" src="" alt="preview" />
+              <div><button class="btn-remove" id="email-image-remove">Remove</button></div>
+            </div>
+            <button class="btn" id="btn-scan-email-image">OCR & Analyze Email Image</button>
           </div>
-          <div class="sc-img"><img id="sc-img" src="" alt="Preview"/></div>
-          <div class="sc-vision hidden" id="vision-box">
-            <strong>Vision Analysis</strong>
-            <span id="vision-text"></span>
+
+          <!-- IMAGE UPLOAD PANEL -->
+          <div class="tab-panel" id="tab-image">
+            <h2 class="panel-title">Image Upload</h2>
+            <p class="panel-desc">Upload screenshot of suspicious webpage for Gemini analysis.</p>
+            <div class="upload-zone" id="image-dropzone">
+              <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+                <rect x="2" y="4" width="32" height="28" rx="3" stroke="currentColor" stroke-width="2" />
+                <path d="M2 26l8-9 7 7 5-5 8 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  fill="none" />
+                <circle cx="11" cy="13" r="3" stroke="currentColor" stroke-width="2" />
+              </svg>
+              <div class="upload-text">Drop image here</div>
+              <div class="upload-hint">Click to browse (PNG, JPG)</div>
+              <input type="file" id="image-file" accept="image/*" class="file-hidden" />
+            </div>
+            <div class="upload-preview hidden" id="image-preview-wrap">
+              <img id="image-preview-img" src="" alt="preview" />
+              <div><button class="btn-remove" id="image-remove">Remove</button></div>
+            </div>
+            <button class="btn" id="btn-scan-image">Score with Vision Model</button>
+          </div>
+
+          <!-- QR PANEL -->
+          <div class="tab-panel" id="tab-qr">
+            <h2 class="panel-title">QR Code Scanner</h2>
+            <p class="panel-desc">Decode and analyze QR code URLs.</p>
+            <div class="upload-zone" id="qr-dropzone">
+              <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+                <rect x="3" y="3" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2" />
+                <rect x="21" y="3" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2" />
+                <rect x="3" y="21" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2" />
+                <rect x="21" y="21" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2" />
+              </svg>
+              <div class="upload-text">Drop QR code here</div>
+              <div class="upload-hint">Click to browse (PNG, JPG)</div>
+              <input type="file" id="qr-file" accept="image/*" class="file-hidden" />
+            </div>
+            <div class="upload-preview hidden" id="qr-preview-wrap">
+              <img id="qr-preview-img" src="" alt="QR preview" />
+              <div><button class="btn-remove" id="qr-remove">Remove</button></div>
+            </div>
+            <button class="btn" id="btn-scan-qr">Decode + Scan</button>
           </div>
         </div>
-
       </div>
-    </div>
 
-  </main>
-</div>
+      <!-- RIGHT PANEL: RESULTS -->
+      <div class="right-panel">
+        <!-- Initial Placeholder -->
+        <div class="placeholder" id="placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path
+              d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line x1="12" y1="22.08" x2="12" y2="12" />
+          </svg>
+          <h2>Ready for Analysis</h2>
+          <p>Select a scan method on the left to begin.</p>
+        </div>
 
-<script src="/static/js/app.js"></script>
+        <!-- Loading State -->
+        <div class="loading-wrap hidden" id="loading">
+          <div class="spinner"></div>
+          <div class="loading-label" id="loading-label">Analyzing...</div>
+        </div>
+
+        <!-- Results Data -->
+        <div class="results-content hidden" id="results-section">
+
+          <div class="verdict-card" id="verdict-card">
+            <div class="v-left">
+              <div class="v-icon" id="verdict-icon-wrap">?</div>
+              <div>
+                <div class="v-main" id="verdict-main">—</div>
+                <div class="v-sub" id="verdict-sub"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scores-wrap" id="scores-grid"></div>
+
+          <div class="details-wrap" id="details-grid"></div>
+
+          <div class="screenshot-wrap hidden" id="screenshot-card">
+            <div class="sc-header">
+              Visual Preview
+              <span class="redirect-badge hidden" id="redirect-badge">Redirected</span>
+            </div>
+            <div class="sc-img"><img id="sc-img" src="" alt="Preview" /></div>
+            <div class="sc-vision hidden" id="vision-box">
+              <strong>Vision Analysis</strong>
+              <span id="vision-text"></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="/static/js/app.js"></script>
 </body>
+
 </html>

@@ -8,6 +8,14 @@ BACKEND_URL = "http://127.0.0.1:8000"
 def index():
     return render_template("index.html")
 
+@app.route("/api/health")
+def health():
+    try:
+        r = requests.get(f"{BACKEND_URL}/health", timeout=3)
+        return jsonify(r.json())
+    except Exception as e:
+        return jsonify({"status": "starting", "error": str(e)}), 503
+
 @app.route("/api/scan/url", methods=["POST"])
 def scan_url():
     url = (request.json or {}).get("url", "").strip()
@@ -22,11 +30,13 @@ def scan_url():
 
 @app.route("/api/scan/email", methods=["POST"])
 def scan_email():
-    text = (request.json or {}).get("text", "").strip()
+    data = request.json or {}
+    text = data.get("text", "").strip()
+    model = data.get("model", "roberta").strip()
     if not text:
         return jsonify({"error": "No email text"}), 400
     try:
-        r = requests.post(f"{BACKEND_URL}/scan/email", json={"text": text}, timeout=30)
+        r = requests.post(f"{BACKEND_URL}/scan/email", json={"text": text, "model": model}, timeout=30)
         result = r.json()
         return jsonify(result)
     except Exception as e:
@@ -49,10 +59,12 @@ def scan_image():
 def scan_email_image():
     try:
         file = request.files.get("file")
+        model = request.form.get("model", "roberta")
         if not file:
             return jsonify({"error": "No file uploaded"}), 400
         files = {"file": (file.filename, file.read(), file.content_type)}
-        resp = requests.post(f"{BACKEND_URL}/scan/email_image", files=files, timeout=120)
+        data = {"model": model}
+        resp = requests.post(f"{BACKEND_URL}/scan/email_image", files=files, data=data, timeout=120)
         result = resp.json()
         return jsonify(result)
     except Exception as e:

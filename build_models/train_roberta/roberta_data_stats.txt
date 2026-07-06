@@ -1,0 +1,22 @@
+RoBERTa Training Data Statistics
+================================
+Raw data total rows: 367912
+Cleaned data total rows: 211232
+
+Cleaned Label Distribution (0: Safe Email, 1: Phishing Email):
+  Safe Email (0): 168392 (79.72%)
+  Phishing Email (1): 42840 (20.28%)
+
+Balanced data total rows: 85680
+Balanced Label Distribution:
+  Safe Email (0): 42840 (50.00%)
+  Phishing Email (1): 42840 (50.00%)
+
+Columns after cleaning:
+label, text, label_str, label_enc
+
+Sample Data Format (first 3 rows of balanced data):
+label                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          text label_str  label_enc
+    0 reminder fill enrons corporate internal communications survey short less escapenumber minutes honest confidential yes posting numerical results corporate intranet see please click link http etcsurvey corp enron com wi pescapenumber asp r escapenumber kqdnthmq l escapenumber experiencing technical problems link automatically launch questionnaire escapenumber launch copying link browser escapenumber continue technical difficulties please send email message confirmit enron com escapenumber please forward link anyone else unique respondent         0          0
+    0                                                                                                                                                                                                                                                                                                                                            weekly prepare distribute attached report call weekly highlights report outlines volumes trade confirmations prepared week thought might find numbers interesting interested receiving weekly let know kim theriot         0          0
+    1                                                                                                                                                                                                                                                                                                                                                                                       tara turner centralizationy5christopherslemmercom come love finding perfect person learning see imperfect person perfectly httpcjpushyetcom thu 07 aug 2008 135754 0900         1          1

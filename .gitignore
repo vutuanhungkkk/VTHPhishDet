@@ -29,3 +29,12 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Datasets and large text/JSON files
+*.csv
+*.jsonl
+build_models/train_*/data/
+build_models/train_*/outputs/
+
+# Test assets
+test_images/
