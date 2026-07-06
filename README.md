@@ -4,7 +4,6 @@
 </div>
 <div align="center">
   <b>DEMO: 🔗 <a href="https://drive.google.com/file/d/1J-_69e6KT_klt2xPMkVhdI8xCQhdF9ZM/view?usp=drive_link">Demo Video</a></b><br><br>
-  <img src="gif/test.gif" alt="PhishGuard Demo" width="800" />
 </div>
 
 <br />
