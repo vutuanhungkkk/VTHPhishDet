@@ -2,8 +2,7 @@
   <h1>🛡️ VTHPhishDet (PhishGuard)</h1>
   <h3>AI-Powered Multimodal Phishing Detection Framework</h3>
 </div>
-DEMO: 🔗 **[Demo Video](https://drive.google.com/file/d/1J-_69e6KT_klt2xPMkVhdI8xCQhdF9ZM/view?usp=drive_link)**
-![](gif/test.gif)
+
 <br />
 
 <div align="center">
@@ -13,7 +12,8 @@ DEMO: 🔗 **[Demo Video](https://drive.google.com/file/d/1J-_69e6KT_klt2xPMkVhd
   <img src="https://img.shields.io/badge/Transformers-HuggingFace-yellow?style=flat-square">
   <img src="https://img.shields.io/badge/Gemini_1.5_Flash-Vision-orange?style=flat-square">
 </div>
-
+DEMO: 🔗 **[Demo Video](https://drive.google.com/file/d/1J-_69e6KT_klt2xPMkVhdI8xCQhdF9ZM/view?usp=drive_link)**
+![](gif/test.gif)
 ---
 
 ## 📑 Table of Contents
